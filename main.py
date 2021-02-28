@@ -6,12 +6,12 @@ import random
 
 class DoodleJump:
     def __init__(self):
-        self.screen = pygame.display.set_mode((800, 600))
-        self.green = pygame.image.load("assets/green.png").convert_alpha()
+        self.screen = pygame.display.set_mode((600, 800))
         pygame.font.init()
         self.score = 0
         self.font = pygame.font.SysFont(
             "sitkasmallsitkatextboldsitkasubheadingboldsitkaheadingboldsitkadisplayboldsitkabannerbold", 25)
+        self.green = pygame.image.load("assets/green.png").convert_alpha()
         self.blue = pygame.image.load("assets/blue.png").convert_alpha()
         self.red = pygame.image.load("assets/red.png").convert_alpha()
         self.red_1 = pygame.image.load("assets/red_1.png").convert_alpha()
@@ -22,9 +22,9 @@ class DoodleJump:
         self.spring = pygame.image.load("assets/spring.png").convert_alpha()
         self.spring_1 = pygame.image.load("assets/spring_1.png").convert_alpha()
         self.direction = 0
-        self.playerx = 400
-        self.playery = 400
-        self.platforms = [[400, 500, 0, 0]]
+        self.playerx = 270
+        self.playery = 610
+        self.platforms = [[250, 600, 0, 0]]
         self.springs = []
         self.cameray = 0
         self.jump = 0
@@ -32,12 +32,13 @@ class DoodleJump:
         self.xmovement = 0
 
     def updatePlayer(self):
-        if not self.jump:
+        if self.jump <= 0:
+            self.jump = 0
             self.playery += self.gravity
-            self.gravity += 0.5
-        elif self.jump:
+            self.gravity += 0.3
+        else:
             self.playery -= self.jump
-            self.jump -= 0.5
+            self.jump -= 0.3
         key = pygame.key.get_pressed()
         if key[K_RIGHT]:
             if self.xmovement < 10:
@@ -53,13 +54,14 @@ class DoodleJump:
                 self.xmovement -= 1
             elif self.xmovement < 0:
                 self.xmovement += 1
-        if self.playerx > 850:
+        if self.playerx > 650:
             self.playerx = -50
         elif self.playerx < -50:
-            self.playerx = 850
+            self.playerx = 650
         self.playerx += self.xmovement
-        if self.playery - self.cameray <= 200:
-            self.cameray -= 6
+        if self.playery - self.cameray <= 300:
+            self.cameray -= 7
+
         if not self.direction:
             if self.jump:
                 self.screen.blit(self.playerRight_1, (self.playerx, self.playery - self.cameray))
@@ -76,7 +78,7 @@ class DoodleJump:
             rect = pygame.Rect(p[0], p[1], self.green.get_width() - 10, self.green.get_height())
             player = pygame.Rect(self.playerx, self.playery, self.playerRight.get_width() - 10,
                                  self.playerRight.get_height())
-            if not self.jump:
+            if self.jump >= 0:
                 if rect.colliderect(player) and self.gravity and self.playery < (p[1] - self.cameray):
                     if p[2] != 2:
                         self.jump = 15
@@ -96,7 +98,7 @@ class DoodleJump:
     def drawPlatforms(self):
         for p in self.platforms:
             check = self.platforms[1][1] - self.cameray
-            if check > 600:
+            if check > 800:
                 platform = random.randint(0, 1000)
                 if platform < 800:
                     platform = 0
@@ -105,13 +107,14 @@ class DoodleJump:
                 else:
                     platform = 2
 
-                self.platforms.append([random.randint(0, 700), self.platforms[-1][1] - 50, platform, 0])
+                self.platforms.append([random.randint(0, 500), self.platforms[-1][1] - 50, platform, 0])
                 coords = self.platforms[-1]
                 ch = random.randint(0, 100)
                 if ch > 90 and platform == 0:
                     self.springs.append([coords[0], coords[1] - 25, 0])
                 self.platforms.pop(0)
                 self.score += 100
+            print(p)
             if p[2] == 0:
                 self.screen.blit(self.green, (p[0], p[1] - self.cameray))
             elif p[2] == 1:
@@ -122,25 +125,26 @@ class DoodleJump:
                 else:
                     self.screen.blit(self.red_1, (p[0], p[1] - self.cameray))
 
-        for spring in self.springs:
-            if spring[-1]:
-                self.screen.blit(self.spring_1, (spring[0], spring[1] - self.cameray))
-            else:
-                self.screen.blit(self.spring, (spring[0], spring[1] - self.cameray))
-            if pygame.Rect(spring[0], spring[1], self.spring.get_width(), self.spring.get_height()).colliderect(
-                    pygame.Rect(self.playerx, self.playery, self.playerRight.get_width(),
-                                self.playerRight.get_height())):
-                self.jump = 30
-                self.cameray -= 60
+        # for spring in self.springs:
+        #     if spring[-1]:
+        #         self.screen.blit(self.spring_1, (spring[0], spring[1] - self.cameray))
+        #     else:
+        #         self.screen.blit(self.spring, (spring[0], spring[1] - self.cameray))
+        #     if pygame.Rect(spring[0], spring[1], self.spring.get_width(), self.spring.get_height()).colliderect(
+        #             pygame.Rect(self.playerx, self.playery, self.playerRight.get_width(),
+        #                         self.playerRight.get_height())):
+        #         self.jump = 20
+        # self.cameray -= 30
 
     def generatePlatforms(self):
-        on = 600
-        while on > -100:
-            x = random.randint(0, 700)
-            platform = random.randint(0, 1000)
-            if platform < 800:
+        on = 800
+        while on > -50:
+
+            x = random.randint(0, 500)
+            platform = random.randint(0, 600)
+            if platform < 400:
                 platform = 0
-            elif platform < 900:
+            elif platform < 500:
                 platform = 1
             else:
                 platform = 2
@@ -165,11 +169,11 @@ class DoodleJump:
                 self.cameray = 0
                 self.score = 0
                 self.springs = []
-                self.platforms = [[400, 500, 0, 0]]
+                self.platforms = [[250, 600, 0, 0]]
                 self.generatePlatforms()
-                self.playerx = 400
-                self.playery = 400
-            self.drawGrid()
+                self.playerx = 270
+                self.playery = 610
+            # self.drawGrid()
             self.drawPlatforms()
             self.updatePlayer()
             self.updatePlatforms()
