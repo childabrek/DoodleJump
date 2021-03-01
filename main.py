@@ -4,6 +4,7 @@ import random
 import sys
 
 
+# START THE PROJECT
 class DoodleJump:
     def __init__(self):
         # size
