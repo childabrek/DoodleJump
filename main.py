@@ -1,16 +1,19 @@
 import pygame
 from pygame.locals import *
-import sys
 import random
+import sys
 
 
 class DoodleJump:
     def __init__(self):
+        # size
         self.screen = pygame.display.set_mode((600, 800))
+        # score_module
         pygame.font.init()
         self.score = 0
         self.font = pygame.font.SysFont(
             "sitkasmallsitkatextboldsitkasubheadingboldsitkaheadingboldsitkadisplayboldsitkabannerbold", 25)
+        # loading picture
         self.green = pygame.image.load("assets/green.png").convert_alpha()
         self.blue = pygame.image.load("assets/blue.png").convert_alpha()
         self.red = pygame.image.load("assets/red.png").convert_alpha()
@@ -19,165 +22,154 @@ class DoodleJump:
         self.playerRight_1 = pygame.image.load("assets/right_1.png").convert_alpha()
         self.playerLeft = pygame.image.load("assets/left.png").convert_alpha()
         self.playerLeft_1 = pygame.image.load("assets/left_1.png").convert_alpha()
-        self.spring = pygame.image.load("assets/spring.png").convert_alpha()
-        self.spring_1 = pygame.image.load("assets/spring_1.png").convert_alpha()
         self.direction = 0
-        self.playerx = 270
-        self.playery = 610
-        self.platforms = [[250, 600, 0, 0]]
-        self.springs = []
-        self.cameray = 0
+        # start pos
+        self.player_x = 270
+        self.player_y = 650
+        self.platforms = [[250, 600, 0, 0], [250, 600, 0, 0]]
+        # start variable
+        self.clock = pygame.time.Clock()
+        self.cam_speed = 0
         self.jump = 0
         self.gravity = 0
-        self.xmovement = 0
+        self.x_move = 0
 
-    def updatePlayer(self):
-        if self.jump <= 0:
-            self.jump = 0
-            self.playery += self.gravity
-            self.gravity += 0.3
-        else:
-            self.playery -= self.jump
-            self.jump -= 0.3
-        key = pygame.key.get_pressed()
-        if key[K_RIGHT]:
-            if self.xmovement < 10:
-                self.xmovement += 1
-            self.direction = 0
-
-        elif key[K_LEFT]:
-            if self.xmovement > -10:
-                self.xmovement -= 1
-            self.direction = 1
-        else:
-            if self.xmovement > 0:
-                self.xmovement -= 1
-            elif self.xmovement < 0:
-                self.xmovement += 1
-        if self.playerx > 650:
-            self.playerx = -50
-        elif self.playerx < -50:
-            self.playerx = 650
-        self.playerx += self.xmovement
-        if self.playery - self.cameray <= 300:
-            self.cameray -= 7
-
-        if not self.direction:
-            if self.jump:
-                self.screen.blit(self.playerRight_1, (self.playerx, self.playery - self.cameray))
-            else:
-                self.screen.blit(self.playerRight, (self.playerx, self.playery - self.cameray))
-        else:
-            if self.jump:
-                self.screen.blit(self.playerLeft_1, (self.playerx, self.playery - self.cameray))
-            else:
-                self.screen.blit(self.playerLeft, (self.playerx, self.playery - self.cameray))
-
-    def updatePlatforms(self):
-        for p in self.platforms:
-            rect = pygame.Rect(p[0], p[1], self.green.get_width() - 10, self.green.get_height())
-            player = pygame.Rect(self.playerx, self.playery, self.playerRight.get_width() - 10,
-                                 self.playerRight.get_height())
-            if self.jump >= 0:
-                if rect.colliderect(player) and self.gravity and self.playery < (p[1] - self.cameray):
-                    if p[2] != 2:
-                        self.jump = 15
-                        self.gravity = 0
-                    else:
-                        p[-1] = 1
-            if p[2] == 1:
-                if p[-1] == 1:
-                    p[0] += 5
-                    if p[0] > 550:
-                        p[-1] = 0
-                else:
-                    p[0] -= 5
-                    if p[0] <= 0:
-                        p[-1] = 1
-
-    def drawPlatforms(self):
-        for p in self.platforms:
-            check = self.platforms[1][1] - self.cameray
-            if check > 800:
-                platform = random.randint(0, 1000)
-                if platform < 800:
-                    platform = 0
-                elif platform < 900:
-                    platform = 1
-                else:
-                    platform = 2
-
-                self.platforms.append([random.randint(0, 500), self.platforms[-1][1] - 50, platform, 0])
-                coords = self.platforms[-1]
-                ch = random.randint(0, 100)
-                if ch > 90 and platform == 0:
-                    self.springs.append([coords[0], coords[1] - 25, 0])
-                self.platforms.pop(0)
-                self.score += 100
-            print(p)
-            if p[2] == 0:
-                self.screen.blit(self.green, (p[0], p[1] - self.cameray))
-            elif p[2] == 1:
-                self.screen.blit(self.blue, (p[0], p[1] - self.cameray))
-            elif p[2] == 2:
-                if not p[3]:
-                    self.screen.blit(self.red, (p[0], p[1] - self.cameray))
-                else:
-                    self.screen.blit(self.red_1, (p[0], p[1] - self.cameray))
-
-        # for spring in self.springs:
-        #     if spring[-1]:
-        #         self.screen.blit(self.spring_1, (spring[0], spring[1] - self.cameray))
-        #     else:
-        #         self.screen.blit(self.spring, (spring[0], spring[1] - self.cameray))
-        #     if pygame.Rect(spring[0], spring[1], self.spring.get_width(), self.spring.get_height()).colliderect(
-        #             pygame.Rect(self.playerx, self.playery, self.playerRight.get_width(),
-        #                         self.playerRight.get_height())):
-        #         self.jump = 20
-        # self.cameray -= 30
-
-    def generatePlatforms(self):
-        on = 800
-        while on > -50:
-
-            x = random.randint(0, 500)
-            platform = random.randint(0, 600)
-            if platform < 400:
+    def gen_plat(self):
+        for i in range(850, 0, -50):
+            # choice platform
+            chance = random.randint(0, 100)
+            if chance < 40:
                 platform = 0
-            elif platform < 500:
+            elif chance < 70:
                 platform = 1
             else:
                 platform = 2
-            self.platforms.append([x, on, platform, 0])
-            on -= 50
+            self.platforms.append([random.randint(0, 500), i, platform, 0])
 
-    def drawGrid(self):
-        for x in range(80):
-            pygame.draw.line(self.screen, (222, 222, 222), (x * 12, 0), (x * 12, 600))
-            pygame.draw.line(self.screen, (222, 222, 222), (0, x * 12), (800, x * 12))
+    def update_player(self):
+        if self.jump <= 0:
+            # fall
+            self.jump = 0
+            self.player_y += self.gravity
+            self.gravity += 0.3
+        else:
+            # fly
+            self.player_y -= self.jump
+            self.jump -= 0.3
+        # control
+        key = pygame.key.get_pressed()
+        if key[K_RIGHT]:
+            if self.x_move < 10:
+                self.x_move += 0.6
+            self.direction = 0
+        elif key[K_LEFT]:
+            if self.x_move > -10:
+                self.x_move -= 0.6
+            self.direction = 1
+        else:
+            if self.x_move > 0:
+                self.x_move -= 1
+            elif self.x_move < 0:
+                self.x_move += 1
+        # player transition to other side
+        if self.player_x > 650:
+            self.player_x = -50
+        elif self.player_x < -50:
+            self.player_x = 650
+        self.player_x += self.x_move
+        # camera moving
+        if self.player_y - self.cam_speed <= 300:
+            self.cam_speed -= 7
+        # choice player picture
+        if not self.direction:
+            if self.jump:
+                self.screen.blit(self.playerRight_1, (self.player_x, self.player_y - self.cam_speed))
+            else:
+                self.screen.blit(self.playerRight, (self.player_x, self.player_y - self.cam_speed))
+        else:
+            if self.jump:
+                self.screen.blit(self.playerLeft_1, (self.player_x, self.player_y - self.cam_speed))
+            else:
+                self.screen.blit(self.playerLeft, (self.player_x, self.player_y - self.cam_speed))
+
+    def update_screen(self):
+        for i in self.platforms:
+            rect = pygame.Rect(i[0], i[1], self.green.get_width() - 10, 10)
+            player = pygame.Rect(self.player_x, self.player_y - 40, self.playerRight.get_width() - 10,
+                                 self.playerRight.get_height() + 20)
+            if self.jump >= 0:
+                if rect.colliderect(player) and self.gravity and self.player_y < (i[1] - self.cam_speed):
+                    if i[2] != 2:
+                        self.jump = 15
+                        self.gravity = 0
+                    else:
+                        i[-1] = 1
+
+            if i[2] == 1:
+                if i[-1] == 1:
+                    i[0] += 5
+                    if i[0] > 550:
+                        i[-1] = 0
+                else:
+                    i[0] -= 5
+                    if i[0] <= 0:
+                        i[-1] = 1
+
+    def draw_plat(self):
+        for p in self.platforms:
+
+            check = self.platforms[1][1] - self.cam_speed
+            if check > 800:
+                chance = random.randint(0, 100)
+                if chance < 70:
+                    platform = 0
+                elif chance < 85:
+                    platform = 1
+                else:
+                    platform = 2
+                if self.score < 5000:
+                    self.platforms.append([random.randint(0, 500), self.platforms[-1][1] - 50, platform, 0])
+                elif self.score < 10000:
+                    self.platforms.append([random.randint(0, 500), self.platforms[-1][1] - 60, platform, 0])
+                else:
+                    self.platforms.append([random.randint(0, 500), self.platforms[-1][1] - 80, platform, 0])
+                self.platforms.pop(0)
+                self.score = self.cam_speed * -1
+
+            if p[2] == 0:
+                self.screen.blit(self.green, (p[0], p[1] - self.cam_speed))
+            elif p[2] == 1:
+                self.screen.blit(self.blue, (p[0], p[1] - self.cam_speed))
+            elif p[2] == 2:
+                if not p[3]:
+                    self.screen.blit(self.red, (p[0], p[1] - self.cam_speed))
+                else:
+
+                    self.screen.blit(self.red_1, (p[0], p[1] - self.cam_speed))
 
     def run(self):
-        clock = pygame.time.Clock()
-        self.generatePlatforms()
+        a = [0]
+        self.gen_plat()
         while True:
             self.screen.fill((255, 255, 255))
-            clock.tick(60)
+            self.clock.tick(60)
             for event in pygame.event.get():
                 if event.type == QUIT:
                     sys.exit()
-            if self.playery - self.cameray > 700:
-                self.cameray = 0
-                self.score = 0
-                self.springs = []
+            if self.player_y - self.cam_speed > 700:
+                self.cam_speed = 0
+                a.append(self.score)
                 self.platforms = [[250, 600, 0, 0]]
-                self.generatePlatforms()
-                self.playerx = 270
-                self.playery = 610
-            # self.drawGrid()
-            self.drawPlatforms()
-            self.updatePlayer()
-            self.updatePlatforms()
+                self.gen_plat()
+                self.player_x = 270
+                self.player_y = 610
+
+            self.draw_plat()
+            self.update_player()
+            self.update_screen()
             self.screen.blit(self.font.render(str(self.score), -1, (0, 0, 0)), (25, 25))
+
+            self.screen.blit(self.font.render('HI:' + str(max(a)), -1, (0, 0, 0)), (25, 50))
             pygame.display.flip()
 
 
