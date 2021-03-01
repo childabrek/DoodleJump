@@ -16,16 +16,15 @@ class DoodleJump:
         self.font = pygame.font.SysFont(
             "sitkasmallsitkatextboldsitkasubheadingboldsitkaheadingboldsitkadisplayboldsitkabannerbold", 25)
         # loading picture
-        self.green = pygame.image.load("assets/green.png").convert_alpha()
-        self.blue = pygame.image.load("assets/blue.png").convert_alpha()
-        self.red = pygame.image.load("assets/red.png").convert_alpha()
-        self.red_1 = pygame.image.load("assets/red_1.png").convert_alpha()
-        self.playerRight = pygame.image.load("assets/right.png").convert_alpha()
-        self.playerRight_1 = pygame.image.load("assets/right_1.png").convert_alpha()
-        self.playerLeft = pygame.image.load("assets/left.png").convert_alpha()
-        self.playerLeft_1 = pygame.image.load("assets/left_1.png").convert_alpha()
-        self.monster = pygame.image.load("assets/monsters.png").convert_alpha()
-        print(self.monster.get_width(), self.monster.get_height())
+        self.green = pygame.image.load("assets/pygreen.png").convert_alpha()
+        self.blue = pygame.image.load("assets/pyblue.png").convert_alpha()
+        self.red = pygame.image.load("assets/pyred.png").convert_alpha()
+        self.red_1 = pygame.image.load("assets/pyred_1.png").convert_alpha()
+        self.playerRight = pygame.image.load("assets/pytatoright.png").convert_alpha()
+        self.playerRight_1 = pygame.image.load("assets/pytatoright_1.png").convert_alpha()
+        self.playerLeft = pygame.image.load("assets/pytatoleft.png").convert_alpha()
+        self.playerLeft_1 = pygame.image.load("assets/pytatoleft_1.png").convert_alpha()
+        self.monster = pygame.image.load("assets/pymonster.png").convert_alpha()
         self.direction = 0
         # start pos
         self.player_x = 270
