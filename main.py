@@ -6,6 +6,8 @@ import sys
 
 class DoodleJump:
     def __init__(self):
+        # name program
+        pygame.display.set_caption('PotatoJump')
         # size
         self.screen = pygame.display.set_mode((600, 800))
         # score_module
@@ -22,12 +24,15 @@ class DoodleJump:
         self.playerRight_1 = pygame.image.load("assets/right_1.png").convert_alpha()
         self.playerLeft = pygame.image.load("assets/left.png").convert_alpha()
         self.playerLeft_1 = pygame.image.load("assets/left_1.png").convert_alpha()
+        self.monster = pygame.image.load("assets/monsters.png").convert_alpha()
+        print(self.monster.get_width(), self.monster.get_height())
         self.direction = 0
         # start pos
         self.player_x = 270
         self.player_y = 650
         self.platforms = [[250, 600, 0, 0], [250, 600, 0, 0]]
         # start variable
+        self.monsters = []
         self.clock = pygame.time.Clock()
         self.cam_speed = 0
         self.jump = 0
@@ -117,7 +122,6 @@ class DoodleJump:
 
     def draw_plat(self):
         for p in self.platforms:
-
             check = self.platforms[1][1] - self.cam_speed
             if check > 800:
                 chance = random.randint(0, 100)
@@ -136,6 +140,11 @@ class DoodleJump:
                 self.platforms.pop(0)
                 self.score = self.cam_speed * -1
 
+                coords = self.platforms[-1]
+                check = random.randint(0, 100)
+                if check > 95 and platform == 0:
+                    self.monsters.append([coords[0], coords[1] - 50, 0])
+
             if p[2] == 0:
                 self.screen.blit(self.green, (p[0], p[1] - self.cam_speed))
             elif p[2] == 1:
@@ -144,8 +153,15 @@ class DoodleJump:
                 if not p[3]:
                     self.screen.blit(self.red, (p[0], p[1] - self.cam_speed))
                 else:
-
                     self.screen.blit(self.red_1, (p[0], p[1] - self.cam_speed))
+
+            for i in self.monsters:
+                self.screen.blit(self.monster, (i[0], i[1] - self.cam_speed))
+                rect = pygame.Rect(i[0], i[1], self.monster.get_width() - 20, self.monster.get_height() - 10)
+                player = pygame.Rect(self.player_x, self.player_y - 40, self.playerRight.get_width() - 10,
+                                     self.playerRight.get_height() + 20)
+                if player.colliderect(rect):
+                    self.player_y = 10000
 
     def run(self):
         a = [0]
