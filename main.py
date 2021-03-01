@@ -23,6 +23,7 @@ class DoodleJump:
         self.playerRight_1 = pygame.image.load("assets/right_1.png").convert_alpha()
         self.playerLeft = pygame.image.load("assets/left.png").convert_alpha()
         self.playerLeft_1 = pygame.image.load("assets/left_1.png").convert_alpha()
+        self.monster = pygame.image.load("assets/pymonster.png").convert_alpha()
         self.direction = 0
         # start pos
         self.player_x = 270
